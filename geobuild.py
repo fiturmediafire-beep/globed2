@@ -457,7 +457,7 @@ def main(build: Build):
     build.add_cpm_dep("zeux/pugixml", "v1.16", link_name="pugixml-static", options = {
         "PUGIXML_NO_EXCEPTIONS": "ON",
     })
-    build.add_cpm_dep("fiturmediafire-beep/argon", "HASH")
+    build.add_cpm_dep("fiturmediafire-beep/argon", "aa0e86d")
     build.add_cpm_dep("Prevter/sinaps", "b9c3434")
     build.add_cpm_dep("stephenberry/glaze", "v8.0.0", link_name="glaze::glaze")
 
