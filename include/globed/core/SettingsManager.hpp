@@ -4,6 +4,7 @@
 #include "../util/singleton.hpp"
 #include "../util/assert.hpp"
 #include "ValueManager.hpp"
+#include <asp/fs.hpp>
 
 #include <Geode/utils/terminate.hpp>
 #include <Geode/loader/Log.hpp>
