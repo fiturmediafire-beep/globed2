@@ -19,7 +19,7 @@ static auto mapError(FMOD_RESULT result) {
 Sound::Sound(FMOD::Sound* sound) : m_sound(sound) {}
 
 Result<std::shared_ptr<Sound>> Sound::create(const std::filesystem::path& path, bool paused) {
-    return create(utils::string::pathToString(path).c_str(), paused);
+    return create(path.string().c_str(), paused);
 }
 
 Result<std::shared_ptr<Sound>> Sound::create(const char* path, bool paused) {
