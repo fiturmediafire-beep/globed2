@@ -887,7 +887,7 @@ void GlobedGJBGL::sendPlayerLevelMeta(bool fullCheck) {
         toCheck = asp::iter::keys(m_fields->m_players).collect();
     } else {
         toCheck = asp::iter::from(m_fields->m_players).filterMap([](const auto& rw) -> std::optional<int> {
-            auto& [id, player] = rw.get();
+            auto& [id, player] = rw;
             if (!player->getLevelMeta()) {
                 // this player has no meta initialized, we shall request it
                 return id;
