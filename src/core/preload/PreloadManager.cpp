@@ -201,10 +201,10 @@ void PreloadManager::loadNextBatch(PreloadOptions options) {
     }
 
     int remainingCost = asp::iter::from(m_loadQueue)
-        .map([](auto item) {
-            return item.iconType == IconType::DeathEffect ? 20 : 1;
-        })
-        .sum();
+    .map([](const auto& item) {
+        return item.iconType == IconType::DeathEffect ? 20 : 1;
+    })
+    .sum();
 
     // if remaining cost is too small, just load everything to avoid a tiny batch
     if (remainingCost > 0 && remainingCost < 100) {
@@ -434,17 +434,24 @@ void PreloadManager::doLoadBatch(std::vector<PreloadItem> items, PreloadOptions 
     state->cleanup();
 }
 
+static bool equiv(const fs::path& a, const fs::path& b) {
+    if (a.empty() || b.empty()) return false;
+    std::error_code ec;
+    bool r = fs::equivalent(a, b, ec);
+    return !ec && r;
+}
+
 void PreloadManager::initSessionState() {
     m_sstate.preInitTime = Instant::now();
     m_sstate.texQuality = getTextureQuality();
 
-    asp::fs::Path resourceDir = dirs::getGameDir() / "Resources";
-    asp::fs::Path textureLdrUnzipped = dirs::getGeodeDir() / "unzipped" / "geode.texture-loader" / "resources";
-    asp::fs::Path highGraphicsFolder;
+    fs::path resourceDir = dirs::getGameDir() / "Resources";
+fs::path textureLdrUnzipped = dirs::getGeodeDir() / "unzipped" / "geode.texture-loader" / "resources";
+fs::path highGraphicsFolder;
 
     if (auto mod = Loader::get()->getLoadedMod("weebify.high-graphics-android")) {
         highGraphicsFolder = mod->getConfigDir(false) / Loader::get()->getGameVersion();
-        if (!asp::fs::exists(highGraphicsFolder)) {
+        if (!fs::exists(highGraphicsFolder)) {
             highGraphicsFolder.clear();
         }
     }
@@ -454,14 +461,14 @@ void PreloadManager::initSessionState() {
         std::string_view sv{path};
         auto fspath = fs::path(sv);
 
-        if (asp::fs::equivalent(fspath, highGraphicsFolder).unwrapOr(false)) {
+        if (equiv(fspath, highGraphicsFolder)) {
             m_sstate.highTexturesIdx = idx;
         }
 
         if (sv.find("geode.texture-loader") != sv.npos) {
             // this might be the unzipped/ folder, if so, ignore it
             // if the check failed, or if the path isn't equivalent to unzipped, count it as a texture pack folder
-            if (!asp::fs::equivalent(fspath, textureLdrUnzipped).unwrapOr(false)) {
+            if (!equiv(fspath, textureLdrUnzipped)) {
                 m_sstate.hasTexturePack = true;
                 m_sstate.texturePackIndices.push_back(idx);
             }
@@ -476,7 +483,7 @@ void PreloadManager::initSessionState() {
             m_sstate.gameSearchPathIdx = idx;
         }
 #else
-        if (asp::fs::equivalent(fspath, resourceDir).unwrapOr(false)) {
+        if (equiv(fspath, resourceDir)) {
             m_sstate.gameSearchPathIdx = idx;
         }
 #endif
