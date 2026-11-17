@@ -72,7 +72,7 @@ static void forceWarp(WarpContext context) {
         // globed::replaceScene(PlayLayer::scene(classify.level, false, false));
     } else if (classify.kind == GameLevelKind::Tower) {
         // tower levels, always go straight to playlayer
-        globed::replaceScene(PlayLayer::scene(classify.level, false, false));
+        globed::replaceScene(PlayLayer::scene(classify.level, false)
     } else {
         // custom levels, show a loading popup
         auto popup = WarpLoadPopup::create(levelId, openLevel, false);
