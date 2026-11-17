@@ -102,7 +102,7 @@ void Sound::stop() {
 Result<FMOD::Sound*> Sound::createRaw(const char* path) {
     FMOD::Sound* sound = nullptr;
     auto e = system()->createSound(
-        path.string().c_str(),
+        path,
         FMOD_DEFAULT | FMOD_NONBLOCKING,
         nullptr,
         &sound
