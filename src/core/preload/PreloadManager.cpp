@@ -202,7 +202,7 @@ void PreloadManager::loadNextBatch(PreloadOptions options) {
 
     int remainingCost = asp::iter::from(m_loadQueue)
         .map([](auto item) {
-            return item.get().iconType == IconType::DeathEffect ? 20 : 1;
+            return item.iconType == IconType::DeathEffect ? 20 : 1;
         })
         .sum();
 
