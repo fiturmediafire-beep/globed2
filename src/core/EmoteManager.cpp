@@ -130,7 +130,7 @@ $on_game(Loaded) {
     }
 
     // register sfx
-    if (auto res = asp::fs::iterdir(Mod::get()->getResourcesDir())) {
+    if (auto res = asp::fs::iterDir(Mod::get()->getResourcesDir())) {
         for (auto& entry : *res) {
             auto name = utils::string::pathToString(entry.path().filename());
 
