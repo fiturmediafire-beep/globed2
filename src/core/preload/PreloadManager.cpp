@@ -438,9 +438,9 @@ void PreloadManager::initSessionState() {
     m_sstate.preInitTime = Instant::now();
     m_sstate.texQuality = getTextureQuality();
 
-    fs::path resourceDir = dirs::getGameDir() / "Resources";
-    fs::path textureLdrUnzipped = dirs::getGeodeDir() / "unzipped" / "geode.texture-loader" / "resources";
-    fs::path highGraphicsFolder;
+    asp::fs::Path resourceDir = dirs::getGameDir() / "Resources";
+    asp::fs::Path textureLdrUnzipped = dirs::getGeodeDir() / "unzipped" / "geode.texture-loader" / "resources";
+    asp::fs::Path highGraphicsFolder;
 
     if (auto mod = Loader::get()->getLoadedMod("weebify.high-graphics-android")) {
         highGraphicsFolder = mod->getConfigDir(false) / Loader::get()->getGameVersion();
