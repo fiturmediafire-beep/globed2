@@ -214,6 +214,7 @@ void APSController::getAllPlayers() {
 
 // PlayLayer
 
+bool APSPlayLayer::init(GJGameLevel* level, bool dontCreateObjects) {
     if (!PlayLayer::init(level, dontCreateObjects)) return false;
 
     auto& fields = *m_fields.self();
