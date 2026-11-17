@@ -59,12 +59,10 @@ VisualPlayer::VisualPlayer() : PlayerObject(geode::ZeroConstructor, 0)
     new (&m_rotateObjectsRelated) decltype(m_rotateObjectsRelated)();
     new (&m_potentialSlopeMap) decltype(m_potentialSlopeMap)();
     m_rotateSpeed = 1.0f;
-    new (&m_ringRelatedSet) decltype(m_ringRelatedSet)();
     m_playerSpeed = 0.9f;
     m_platformerVelocityRelated = 1.0f;
     new (&m_touchedRings) decltype(m_touchedRings)();
     m_gravityMod = 1.0f;
-    new (&m_jumpPadRelated) decltype(m_jumpPadRelated)();
     new (&m_holdingButtons) decltype(m_holdingButtons)();
     new (&m_currentRobotAnimation) gd::string("run");
 }
