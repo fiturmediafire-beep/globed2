@@ -3,6 +3,7 @@
 #include <globed/core/SettingsManager.hpp>
 #include <globed/core/game/RemotePlayer.hpp>
 #include <globed/util/format.hpp>
+#include <asp/iter/Collectors.hpp>
 
 #ifdef GEODE_IS_WINDOWS
 # include <objbase.h>
