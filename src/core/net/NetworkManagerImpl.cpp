@@ -1131,7 +1131,7 @@ Future<> NetworkManagerImpl::threadSetupLogger(bool central) {
         opt.emplace();
 
         auto base = Mod::get()->getConfigDir() / (central ? "central-logs" : "game-logs");
-        co_await opt->setup(std::move(base));
+        co_await opt->setup(std::filesystem::path(fmt::format("{}", base)));
     }
 
     opt->reset();
@@ -1740,7 +1740,7 @@ std::vector<uint8_t> NetworkManagerImpl::computeUident(int accountId) {
 #endif
     wd.v5 = strlen(wd.v4);
 
-    auto sdir = utils::string::pathToString(Mod::get()->getSaveDir());
+    auto sdir = fmt::format("{}", Mod::get()->getSaveDir());
     wd.v6 = sdir.c_str();
     wd.v7 = sdir.size();
 
