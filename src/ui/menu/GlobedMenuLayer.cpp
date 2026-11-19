@@ -35,7 +35,7 @@
 #include <argon/argon.hpp>
 #include <cue/RepeatingBackground.hpp>
 #include <UIBuilder.hpp>
-#include <geode.devtools/include/API.hpp>
+// #include <geode.devtools/include/API.hpp>
 
 using namespace geode::prelude;
 using namespace asp::time;
@@ -1235,7 +1235,7 @@ bool GlobedMenuLayer::shouldAutoRefresh(float dt) {
     }
 
     // don't refresh if devtools is open
-    if (devtools::isOpen()) {
+     if (false) {
         return false;
     }
 
