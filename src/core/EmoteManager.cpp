@@ -131,8 +131,11 @@ $on_game(Loaded) {
 
     // register sfx
     if (auto res = asp::fs::iterDir(Mod::get()->getResourcesDir())) {
-        for (auto& entry : *res) {
-            auto name = utils::string::pathToString(entry.path().filename());
+        for (auto entryRes : *res) {
+            if (!entryRes) continue;
+            auto entry = std::move(entryRes).unwrap();
+            std::filesystem::path fullPath{fmt::format("{}", entry.path())};
+            auto name = fullPath.filename().string();
 
             if (!name.starts_with("emote_sfx_") || !name.ends_with(".ogg")) {
                 continue;
@@ -146,7 +149,7 @@ $on_game(Loaded) {
 
             if (num == (uint32_t)-1) continue;
 
-            em.registerSfx(num, entry.path());
+            em.registerSfx(num, fullPath);
         }
     }
 
