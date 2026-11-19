@@ -28,7 +28,7 @@ void EmoteManager::registerEmote(uint32_t id, std::string name) {
 }
 
 void EmoteManager::registerSfx(uint32_t id, const std::filesystem::path& name) {
-    m_sfxPaths[id] = utils::string::pathToString(name);
+    m_sfxPaths[id] = fmt::format("{}", name);
 }
 
 CCSprite* EmoteManager::createEmote(uint32_t id) {
