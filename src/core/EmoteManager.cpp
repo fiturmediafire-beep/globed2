@@ -134,7 +134,7 @@ $on_game(Loaded) {
         for (auto entryRes : *res) {
             if (!entryRes) continue;
             auto entry = std::move(entryRes).unwrap();
-            std::filesystem::path fullPath{fmt::format("{}", entry.path())};
+            std::filesystem::path fullPath{fmt::format("{}", entry.path)};
             auto name = fullPath.filename().string();
 
             if (!name.starts_with("emote_sfx_") || !name.ends_with(".ogg")) {
