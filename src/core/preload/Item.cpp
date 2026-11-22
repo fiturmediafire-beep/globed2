@@ -3,7 +3,10 @@
 #include "OpenGL.hpp"
 #include "PreloadManager.hpp"
 #include "spriteframes.hpp"
-#include <prevter.imageplus/include/events.hpp>
+#if __has_include(<prevter.imageplus/include/events.hpp>)
+# include <prevter.imageplus/include/events.hpp>
+# define GLOBED_HAS_IMAGEPLUS 1
+#endif
 #include <bit>
 
 #ifdef GEODE_IS_WINDOWS
@@ -41,7 +44,11 @@ static bool shouldUsePBO() {
 }
 
 bool canDirectDecode() {
+#ifdef GLOBED_HAS_IMAGEPLUS
     static bool can = shouldUsePBO() && imgp::isAvailable() && globed::setting<bool>("core.preload.use-direct-decode");
+#else
+    static bool can = false;
+#endif
     return can;
 }
 
@@ -142,6 +149,7 @@ void PreloadItemState::enqueueImageDecode() {
         m_rawData = std::move(buffer);
         m_rawSize = filesize;
 
+#ifdef GLOBED_HAS_IMAGEPLUS
         if (canDirectDecode()) {
             // try to parse only the image header, this may not work if imageplus is outdated
             auto res = imgp::decode::pngHeader(m_rawData.get(), m_rawSize);
@@ -157,6 +165,7 @@ void PreloadItemState::enqueueImageDecode() {
                 log::warn("Failed to decode PNG header: {}, falling back to full decode", res.unwrapErr());
             }
         }
+#endif
 
         m_image = Ref<CCImage>::adopt(new CCImage());
         if (!m_image->initWithImageData(m_rawData.get(), m_rawSize, cocos2d::CCImage::kFmtPng)) {
@@ -252,6 +261,7 @@ void PreloadItemState::enqueuePBOCreation() {
             std::memcpy(ptr, m_image->m_pData, byteSize);
             m_image = nullptr; // no longer needed
         } else {
+#ifdef GLOBED_HAS_IMAGEPLUS
             // decode the image into a scratch buffer
             auto sbuf = g_scratch.reserve(byteSize);
             auto res = imgp::decode::pngInto(m_rawData.get(), m_rawSize, sbuf, byteSize);
@@ -265,10 +275,15 @@ void PreloadItemState::enqueuePBOCreation() {
 
             auto bytes = res.unwrap();
             GLOBED_DEBUG_ASSERT(bytes == (size_t)byteSize);
-            // log::debug("{}: decoded: {} png, {} decoded, {} expected", m_path, m_rawSize, bytes, byteSize);
 
             // now premultiply alpha and write into the pbo
             premultiplyInto(sbuf, ptr, byteSize);
+#else
+            // imageplus is unavailable, direct decode is never used
+            m_rawData.reset();
+            this->invokeCallback(ItemStateEnum::Failed);
+            return;
+#endif
         }
 
         // notify main thread
