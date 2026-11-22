@@ -65,15 +65,18 @@ struct GLOBED_MODIFY_ATTR UIHookedUILayer : geode::Modify<UIHookedUILayer, UILay
         constexpr float size = 28.f;
         auto& em = EmoteManager::get();
 
+        constexpr float gap = 5.f;
+
         auto list = CCMenu::create();
         list->setID("quick-emote-list"_spr);
-        list->setContentSize({size + 4.f, 0.f});
         list->setLayout(ColumnLayout::create()
             ->setAxisReverse(true)      // urut dari atas ke bawah
             ->setAutoScale(false)
-            ->setGap(5.f)
+            ->setGap(gap)
             ->setAxisAlignment(AxisAlignment::End)
         );
+
+        size_t count = 0;
 
         for (uint32_t slot = 0; slot < 8; slot++) {
             auto emoteSpr = em.createFavoriteEmote(slot);
@@ -87,8 +90,13 @@ struct GLOBED_MODIFY_ATTR UIHookedUILayer : geode::Modify<UIHookedUILayer, UILay
                 this->closeEmoteList();
             });
             list->addChild(item);
+            count++;
         }
 
+        if (count == 0) return; // belum ada emote favorit
+
+        // tinggi harus diisi, kalau 0 semua item menumpuk di satu titik
+        list->setContentSize({size + 4.f, count * size + (count - 1) * gap});
         list->updateLayout();
         list->setAnchorPoint({0.5f, 1.f});
         list->setPosition({0.f, -22.f}); // di bawah tombol emote
