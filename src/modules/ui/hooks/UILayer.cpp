@@ -9,6 +9,7 @@
 #include <Geode/modify/UILayer.hpp>
 #include <UIBuilder.hpp>
 #include <cue/Util.hpp>
+#include <vector>
 
 using namespace geode::prelude;
 
@@ -63,20 +64,11 @@ struct GLOBED_MODIFY_ATTR UIHookedUILayer : geode::Modify<UIHookedUILayer, UILay
         }
 
         constexpr float size = 28.f;
+        constexpr float gap = 5.f;
+        constexpr size_t cols = 2; // 2 kolom x 4 baris, supaya muat di layar
         auto& em = EmoteManager::get();
 
-        constexpr float gap = 5.f;
-
-        auto list = CCMenu::create();
-        list->setID("quick-emote-list"_spr);
-        list->setLayout(ColumnLayout::create()
-            ->setAxisReverse(true)      // urut dari atas ke bawah
-            ->setAutoScale(false)
-            ->setGap(gap)
-            ->setAxisAlignment(AxisAlignment::End)
-        );
-
-        size_t count = 0;
+        std::vector<CCMenuItem*> items;
 
         for (uint32_t slot = 0; slot < 8; slot++) {
             auto emoteSpr = em.createFavoriteEmote(slot);
@@ -89,17 +81,34 @@ struct GLOBED_MODIFY_ATTR UIHookedUILayer : geode::Modify<UIHookedUILayer, UILay
                 if (gpl) gpl->playSelfFavoriteEmote(slot); // ada cooldown 2.5 detik
                 this->closeEmoteList();
             });
-            list->addChild(item);
-            count++;
+            items.push_back(item);
         }
 
-        if (count == 0) return; // belum ada emote favorit
+        if (items.empty()) return; // belum ada emote favorit
 
-        // tinggi harus diisi, kalau 0 semua item menumpuk di satu titik
-        list->setContentSize({size + 4.f, count * size + (count - 1) * gap});
-        list->updateLayout();
-        list->setAnchorPoint({0.5f, 1.f});
-        list->setPosition({0.f, -22.f}); // di bawah tombol emote
+        size_t rows = (items.size() + cols - 1) / cols;
+        float width = cols * size + (cols - 1) * gap;
+        float height = rows * size + (rows - 1) * gap;
+
+        auto list = CCMenu::create();
+        list->setID("quick-emote-list"_spr);
+        list->ignoreAnchorPointForPosition(false);
+        list->setContentSize({width, height});
+
+        // posisi manual: kiri ke kanan, atas ke bawah (tanpa layout)
+        for (size_t i = 0; i < items.size(); i++) {
+            size_t row = i / cols;
+            size_t col = i % cols;
+            items[i]->setPosition({
+                col * (size + gap) + size / 2.f,
+                height - row * (size + gap) - size / 2.f
+            });
+            list->addChild(items[i]);
+        }
+
+        // kanan list sejajar dengan tepi kanan layar, tepat di bawah tombol emote
+        list->setAnchorPoint({1.f, 1.f});
+        list->setPosition({26.f, -22.f});
 
         f.m_btnMenu->addChild(list);
         f.m_list = list;
